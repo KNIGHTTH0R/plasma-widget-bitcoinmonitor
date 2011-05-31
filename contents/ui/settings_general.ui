@@ -22,7 +22,7 @@
     <height>200</height>
    </size>
   </property>
-    <widget class="KComboBox" name="pool">
+  <widget class="KComboBox" name="pool">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -39,6 +39,11 @@
    <item>
     <property name="text">
      <string>BTCguild</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>mining.bitcoin.cz</string>
     </property>
    </item>
   </widget>

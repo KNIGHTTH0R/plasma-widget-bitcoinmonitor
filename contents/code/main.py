@@ -11,7 +11,7 @@ from json import load, loads
 from urllib2 import urlopen,URLError,build_opener,HTTPCookieProcessor
 from time import time,localtime
 
-url = ["http://deepbit.net/api/", "http://www.btcguild.com/api.php?api_key="]
+url = ["http://deepbit.net/api/", "http://www.btcguild.com/api.php?api_key=", "https://mining.bitcoin.cz/accounts/profile/json/"]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args=None):
@@ -99,6 +99,11 @@ class bitcoinmonitorApplet(plasmascript.Applet):
                 <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC\
                 <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s".format(
                     self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
+        if self.pool == 2:
+            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC".format(
+                    self.confirmed, self.unconfirmed, self.estimated))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -124,6 +129,10 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.hashrate=0
             for worker in self.data["workers"]:
                 self.hashrate+=float(self.data["workers"][worker]["hash_rate"])
+        if self.pool == 2:
+            self.confirmed=float(self.data["confirmed_reward"])
+            self.unconfirmed=float(self.data["unconfirmed_reward"])
+            self.estimated=float(self.data["estimated_reward"])
         self.label.setText("{0:.4f}".format(self.confirmed))
         self.adjustSize()
         return True
