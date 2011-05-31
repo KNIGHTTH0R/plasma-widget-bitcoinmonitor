@@ -118,7 +118,6 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         except URLError as exc:
             return False
         self.last_getrate=time()
-        print(self.data)
         if self.pool == 0:
             self.confirmed=float(self.data["confirmed_reward"])
             self.hashrate=float(self.data["hashrate"])
