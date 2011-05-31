@@ -11,13 +11,13 @@ from json import load, loads
 from urllib2 import urlopen,URLError,build_opener,HTTPCookieProcessor
 from time import time,localtime
 
+url = ["http://deepbit.net/api/", "http://www.btcguild.com/api.php?api_key="]
+
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args=None):
         plasmascript.Applet.__init__(self,parent)
         self.last_getrate=0
         self.update_interval=300 #5 minutes
-        self.confirmed=0
-        self.hashrate=0
 
     def init(self):
         self.setAspectRatioMode(Plasma.IgnoreAspectRatio)
@@ -25,6 +25,7 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         self.dialog = None
         cg = self.config()
         self.APIkey = cg.readEntry("APIkey", QString("")).toString()
+        self.pool = cg.readEntry("pool", 0).toInt()[0]
 
         self.layout=QGraphicsLinearLayout(Qt.Horizontal, self.applet)
         self.applet.setLayout(self.layout)
@@ -66,13 +67,16 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.connect(self.dialog, SIGNAL("okClicked()"), self, SLOT("configAccepted()"))
 
         self.ui.APIkey.setText(self.APIkey)
+        self.ui.pool.setCurrentIndex (self.pool)
 
         self.dialog.show()
     @pyqtSignature("configAccepted()")
     def configAccepted(self):
         cg = self.config()
         self.APIkey=self.ui.APIkey.text()
+        self.pool=self.ui.pool.currentIndex()
         cg.writeEntry("APIkey", self.APIkey)
+        cg.writeEntry("pool", self.pool)
         self.update()
         self.emit(SIGNAL("configNeedsSaving()"))
         self.update_values()
@@ -85,9 +89,16 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         last=localtime(self.last_getrate)
         ttip=Plasma.ToolTipContent()
         ttip.setMainText("Bitcoin monitor")
-        ttip.setSubText("<br />Confirmed reward: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+        if self.pool == 0:
+            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
                 <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{1:.1f}</span> MHash/s".format(
                     self.confirmed, self.hashrate))
+        if self.pool == 1:
+            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s".format(
+                    self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -98,12 +109,21 @@ class bitcoinmonitorApplet(plasmascript.Applet):
     def get_data(self):
         try:
             opener = build_opener(HTTPCookieProcessor())
-            self.data=loads(opener.open("http://deepbit.net/api/" + str(self.APIkey)).read())
+            self.data=loads(opener.open(url[self.pool] + str(self.APIkey)).read())
         except URLError as exc:
             return False
         self.last_getrate=time()
-        self.confirmed=float(self.data["confirmed_reward"])
-        self.hashrate=float(self.data["hashrate"])
+        print(self.data)
+        if self.pool == 0:
+            self.confirmed=float(self.data["confirmed_reward"])
+            self.hashrate=float(self.data["hashrate"])
+        if self.pool == 1:
+            self.confirmed=float(self.data["user"]["confirmed_rewards"])
+            self.unconfirmed=float(self.data["user"]["unconfirmed_rewards"])
+            self.estimated=float(self.data["user"]["estimated_rewards"])
+            self.hashrate=0
+            for worker in self.data["workers"]:
+                self.hashrate+=float(self.data["workers"][worker]["hash_rate"])
         self.label.setText("{0:.4f}".format(self.confirmed))
         self.adjustSize()
         return True

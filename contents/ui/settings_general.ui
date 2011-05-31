@@ -22,11 +22,31 @@
     <height>200</height>
    </size>
   </property>
+    <widget class="KComboBox" name="pool">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>20</y>
+     <width>331</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Deepbit</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>BTCguild</string>
+    </property>
+   </item>
+  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>30</y>
+     <y>50</y>
      <width>331</width>
      <height>27</height>
     </rect>
@@ -50,6 +70,11 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
