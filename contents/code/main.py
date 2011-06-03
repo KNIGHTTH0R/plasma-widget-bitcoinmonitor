@@ -11,7 +11,10 @@ from json import load, loads
 from urllib2 import urlopen,URLError,build_opener,HTTPCookieProcessor
 from time import time,localtime
 
-url = ["http://deepbit.net/api/", "http://www.btcguild.com/api.php?api_key=", "https://mining.bitcoin.cz/accounts/profile/json/"]
+url = ["http://deepbit.net/api/", \
+       "http://www.btcguild.com/api.php?api_key=", \
+       "https://mining.bitcoin.cz/accounts/profile/json/", \
+       "http://btcmine.com/api/getbalance/" ]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args=None):
@@ -91,19 +94,23 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         ttip.setMainText("Bitcoin monitor")
         if self.pool == 0:
             ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
-                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{1:.1f}</span> MHash/s".format(
-                    self.confirmed, self.hashrate))
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{1:.1f}</span> MHash/s"\
+                .format(self.confirmed, self.hashrate))
         if self.pool == 1:
             ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
                 <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
                 <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC\
-                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s".format(
-                    self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s"\
+                .format(self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
         if self.pool == 2:
             ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
                 <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
-                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC".format(
-                    self.confirmed, self.unconfirmed, self.estimated))
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC"\
+                .format(self.confirmed, self.unconfirmed, self.estimated))
+        if self.pool == 3:
+            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC"\
+                .format(self.confirmed, self.unconfirmed))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -132,6 +139,9 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.confirmed=float(self.data["confirmed_reward"])
             self.unconfirmed=float(self.data["unconfirmed_reward"])
             self.estimated=float(self.data["estimated_reward"])
+        if self.pool == 3:
+            self.confirmed=float(self.data["confirmed"])
+            self.unconfirmed=float(self.data["unconfirmed"])
         self.label.setText("{0:.4f}".format(self.confirmed))
         self.adjustSize()
         return True

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>200</height>
+    <width>435</width>
+    <height>100</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,54 +18,74 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
-    <height>200</height>
+    <width>435</width>
+    <height>100</height>
    </size>
   </property>
-  <widget class="KComboBox" name="pool">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>20</y>
-     <width>331</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>Deepbit</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>BTCguild</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>mining.bitcoin.cz</string>
-    </property>
-   </item>
-  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>50</y>
-     <width>331</width>
-     <height>27</height>
+     <x>20</x>
+     <y>10</y>
+     <width>401</width>
+     <height>61</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>API key:</string>
-      </property>
-     </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Pool:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>API key:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
-    <item>
-     <widget class="KLineEdit" name="APIkey"/>
+    <item row="0" column="1">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="KComboBox" name="pool">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Deepbit</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>BTCguild</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>mining.bitcoin.cz</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>BTCmine</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="KLineEdit" name="APIkey"/>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
