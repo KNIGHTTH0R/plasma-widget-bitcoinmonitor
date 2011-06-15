@@ -14,7 +14,9 @@ from time import time,localtime
 url = ["http://deepbit.net/api/", \
        "http://www.btcguild.com/api.php?api_key=", \
        "https://mining.bitcoin.cz/accounts/profile/json/", \
-       "http://btcmine.com/api/getbalance/" ]
+       "http://btcmine.com/api/getbalance/", \
+       "http://www.bitcoinpool.com/user.php?u="]
+url2 = ["", "", "", "", "&json=1"]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args=None):
@@ -111,12 +113,18 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
                 <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC"\
                 .format(self.confirmed, self.unconfirmed))
+        if self.pool == 4:
+            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:}</span>"\
+                .format(self.confirmed, self.unconfirmed, self.estimated, self.hashrate1))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
     @pyqtSignature("update_data()")
     def update_data(self):
-        self.data_url = kdecore.KUrl(url[self.pool] + str(self.APIkey))
+        self.data_url = kdecore.KUrl(url[self.pool] + str(self.APIkey) + url2[self.pool])
         job = kio.KIO.storedGet(self.data_url, kio.KIO.NoReload, kio.KIO.HideProgressInfo)
         job.result.connect(self.update_values)
     def update_values(self,job):
@@ -142,7 +150,13 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         if self.pool == 3:
             self.confirmed=float(self.data["confirmed"])
             self.unconfirmed=float(self.data["unconfirmed"])
+        if self.pool == 4:
+            self.confirmed=float(self.data["User"]["unpaid"])
+            self.unconfirmed=float(self.data["User"]["unconfirmed"])
+            self.estimated=float(self.data["User"]["estimated"])
+            self.hashrate1=self.data["User"]["currSpeed"]
         self.label.setText("{0:.4f}".format(self.confirmed))
+        self.setToolTip()
         self.adjustSize()
         return True
 
