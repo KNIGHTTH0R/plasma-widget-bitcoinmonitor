@@ -6,7 +6,7 @@ from PyQt4 import uic
 from PyKDE4.kdecore import *
 from PyKDE4.kdeui import *
 from PyKDE4.plasma import Plasma
-from PyKDE4 import plasmascript
+from PyKDE4 import plasmascript,kdecore,kio
 from json import load, loads
 from urllib2 import urlopen,URLError,build_opener,HTTPCookieProcessor
 from time import time,localtime
@@ -49,7 +49,7 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         self.layout.addItem(self.label)
 
         if self.APIkey != "":
-            self.update_values()
+            self.update_data()
         self.update()
         self.startTimer(30000) #30 seconds
 
@@ -82,11 +82,11 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         cg.writeEntry("pool", self.pool)
         self.update()
         self.emit(SIGNAL("configNeedsSaving()"))
-        self.update_values()
+        self.update_data()
 
     def timerEvent(self,event):
         if time() - self.last_getrate > self.update_interval:
-            self.update_values()
+            self.update_data()
         self.update()
     def setToolTip(self):
         last=localtime(self.last_getrate)
@@ -114,16 +114,16 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
-    @pyqtSignature("update_values()")
-    def update_values(self):
-        if self.get_data():
-            self.setToolTip()
-    def get_data(self):
-        try:
-            opener = build_opener(HTTPCookieProcessor())
-            self.data=loads(opener.open(url[self.pool] + str(self.APIkey)).read())
-        except URLError as exc:
-            return False
+    @pyqtSignature("update_data()")
+    def update_data(self):
+        self.data_url = kdecore.KUrl(url[self.pool] + str(self.APIkey))
+        job = kio.KIO.storedGet(self.data_url, kio.KIO.NoReload, kio.KIO.HideProgressInfo)
+        job.result.connect(self.update_values)
+    def update_values(self,job):
+        if job.error():
+            print "job error"
+            return
+        self.data = loads(str(job.data()))
         self.last_getrate=time()
         if self.pool == 0:
             self.confirmed=float(self.data["confirmed_reward"])
