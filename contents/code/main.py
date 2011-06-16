@@ -107,8 +107,9 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         if self.pool == 2:
             ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
                 <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
-                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC"\
-                .format(self.confirmed, self.unconfirmed, self.estimated))
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s"\
+                .format(self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
         if self.pool == 3:
             ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
                 <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC"\
@@ -147,6 +148,9 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.confirmed=float(self.data["confirmed_reward"])
             self.unconfirmed=float(self.data["unconfirmed_reward"])
             self.estimated=float(self.data["estimated_reward"])
+            self.hashrate=0
+            for worker in self.data["workers"]:
+                self.hashrate+=float(self.data["workers"][worker]["hashrate"])
         if self.pool == 3:
             self.confirmed=float(self.data["confirmed"])
             self.unconfirmed=float(self.data["unconfirmed"])
