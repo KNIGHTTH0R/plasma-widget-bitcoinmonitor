@@ -99,27 +99,31 @@ class bitcoinmonitorApplet(plasmascript.Applet):
                 <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{1:.1f}</span> MHash/s"\
                 .format(self.confirmed, self.hashrate))
         if self.pool == 1:
-            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
-                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
-                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC\
-                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s"\
-                .format(self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
+            ttip.setSubText("<br />Total rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{2:.4f}</span> BTC\
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{3:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{4:.1f}</span> MHash/s"\
+                .format(self.total, self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
         if self.pool == 2:
-            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
-                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
-                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC\
-                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s"\
-                .format(self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
+            ttip.setSubText("<br />Total rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{2:.4f}</span> BTC\
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{3:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{4:.1f}</span> MHash/s"\
+                .format(self.total, self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
         if self.pool == 3:
-            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
-                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC"\
-                .format(self.confirmed, self.unconfirmed))
+            ttip.setSubText("<br />Total rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{2:.4f}</span> BTC"\
+                .format(self.total, self.confirmed, self.unconfirmed))
         if self.pool == 4:
-            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
-                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{1:.4f}</span> BTC\
-                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{2:.4f}</span> BTC\
-                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:}</span>"\
-                .format(self.confirmed, self.unconfirmed, self.estimated, self.hashrate1))
+            ttip.setSubText("<br />Total rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{2:.4f}</span> BTC\
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{3:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{4:}</span>"\
+                .format(self.total, self.confirmed, self.unconfirmed, self.estimated, self.hashrate1))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -134,31 +138,33 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             return
         self.data = loads(str(job.data()))
         self.last_getrate=time()
+        self.hashrate = 0
+        self.unconfirmed = 0
         if self.pool == 0:
             self.confirmed=float(self.data["confirmed_reward"])
             self.hashrate=float(self.data["hashrate"])
         if self.pool == 1:
-            self.confirmed=float(self.data["user"]["confirmed_rewards"])
-            self.unconfirmed=float(self.data["user"]["unconfirmed_rewards"])
-            self.estimated=float(self.data["user"]["estimated_rewards"])
-            self.hashrate=0
+            self.confirmed = float(self.data["user"]["confirmed_rewards"])
+            self.unconfirmed = float(self.data["user"]["unconfirmed_rewards"])
+            self.estimated = float(self.data["user"]["estimated_rewards"])
             for worker in self.data["workers"]:
-                self.hashrate+=float(self.data["workers"][worker]["hash_rate"])
+                self.hashrate += float(self.data["workers"][worker]["hash_rate"])
         if self.pool == 2:
-            self.confirmed=float(self.data["confirmed_reward"])
-            self.unconfirmed=float(self.data["unconfirmed_reward"])
-            self.estimated=float(self.data["estimated_reward"])
-            self.hashrate=0
+            self.confirmed = float(self.data["confirmed_reward"])
+            self.unconfirmed = float(self.data["unconfirmed_reward"])
+            self.estimated = float(self.data["estimated_reward"])
+            self.hashrate = 0
             for worker in self.data["workers"]:
                 self.hashrate+=float(self.data["workers"][worker]["hashrate"])
         if self.pool == 3:
             self.confirmed=float(self.data["confirmed"])
             self.unconfirmed=float(self.data["unconfirmed"])
         if self.pool == 4:
-            self.confirmed=float(self.data["User"]["unpaid"])
-            self.unconfirmed=float(self.data["User"]["unconfirmed"])
-            self.estimated=float(self.data["User"]["estimated"])
-            self.hashrate1=self.data["User"]["currSpeed"]
+            self.confirmed = float(self.data["User"]["unpaid"])
+            self.unconfirmed = float(self.data["User"]["unconfirmed"])
+            self.estimated = float(self.data["User"]["estimated"])
+            self.hashrate1 = self.data["User"]["currSpeed"]
+        self.total = self.confirmed+self.unconfirmed
         self.label.setText("{0:.4f}".format(self.confirmed))
         self.setToolTip()
         self.adjustSize()
