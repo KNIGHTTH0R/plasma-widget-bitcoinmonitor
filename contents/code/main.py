@@ -19,10 +19,10 @@ url = ["http://deepbit.net/api/", \
 url2 = ["", "", "", "", "&json=1"]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
-    def __init__(self,parent,args=None):
+    def __init__(self,parent,args = None):
         plasmascript.Applet.__init__(self,parent)
-        self.last_getrate=0
-        self.update_interval=300 #5 minutes
+        self.last_getrate = 0
+        self.update_interval = 300 #5 minutes
 
     def init(self):
         self.setAspectRatioMode(Plasma.IgnoreAspectRatio)
@@ -32,18 +32,18 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         self.APIkey = cg.readEntry("APIkey", QString("")).toString()
         self.pool = cg.readEntry("pool", 0).toInt()[0]
 
-        self.layout=QGraphicsLinearLayout(Qt.Horizontal, self.applet)
+        self.layout = QGraphicsLinearLayout(Qt.Horizontal, self.applet)
         self.applet.setLayout(self.layout)
-        self.label=Plasma.Label(self.applet)
+        self.label = Plasma.Label(self.applet)
         self.label.setAlignment(Qt.AlignVCenter)
 
-        svg=Plasma.Svg(self)
-        icon_path=self.package().path()+"contents/icons/logo.svg"
+        svg = Plasma.Svg(self)
+        icon_path = self.package().path() + "contents/icons/logo.svg"
         svg.setImagePath(icon_path)
-        self.ttip_icon=QIcon(icon_path)
-        self.icon=Plasma.SvgWidget(svg)
+        self.ttip_icon = QIcon(icon_path)
+        self.icon = Plasma.SvgWidget(svg)
         self.icon.setPreferredSize(20,20)
-        policy=QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)
+        policy = QSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)
         self.icon.setSizePolicy(policy)
 
         self.layout.addItem(self.icon)
@@ -78,8 +78,8 @@ class bitcoinmonitorApplet(plasmascript.Applet):
     @pyqtSignature("configAccepted()")
     def configAccepted(self):
         cg = self.config()
-        self.APIkey=self.ui.APIkey.text()
-        self.pool=self.ui.pool.currentIndex()
+        self.APIkey = self.ui.APIkey.text()
+        self.pool = self.ui.pool.currentIndex()
         cg.writeEntry("APIkey", self.APIkey)
         cg.writeEntry("pool", self.pool)
         self.update()
@@ -91,8 +91,8 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.update_data()
         self.update()
     def setToolTip(self):
-        last=localtime(self.last_getrate)
-        ttip=Plasma.ToolTipContent()
+        last = localtime(self.last_getrate)
+        ttip = Plasma.ToolTipContent()
         ttip.setMainText("Bitcoin monitor")
         if self.pool == 0:
             ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
@@ -137,12 +137,12 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             print "job error"
             return
         self.data = loads(str(job.data()))
-        self.last_getrate=time()
+        self.last_getrate = time()
         self.hashrate = 0
         self.unconfirmed = 0
         if self.pool == 0:
-            self.confirmed=float(self.data["confirmed_reward"])
-            self.hashrate=float(self.data["hashrate"])
+            self.confirmed = float(self.data["confirmed_reward"])
+            self.hashrate = float(self.data["hashrate"])
         if self.pool == 1:
             self.confirmed = float(self.data["user"]["confirmed_rewards"])
             self.unconfirmed = float(self.data["user"]["unconfirmed_rewards"])
@@ -155,16 +155,16 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.estimated = float(self.data["estimated_reward"])
             self.hashrate = 0
             for worker in self.data["workers"]:
-                self.hashrate+=float(self.data["workers"][worker]["hashrate"])
+                self.hashrate += float(self.data["workers"][worker]["hashrate"])
         if self.pool == 3:
-            self.confirmed=float(self.data["confirmed"])
-            self.unconfirmed=float(self.data["unconfirmed"])
+            self.confirmed = float(self.data["confirmed"])
+            self.unconfirmed = float(self.data["unconfirmed"])
         if self.pool == 4:
             self.confirmed = float(self.data["User"]["unpaid"])
             self.unconfirmed = float(self.data["User"]["unconfirmed"])
             self.estimated = float(self.data["User"]["estimated"])
             self.hashrate1 = self.data["User"]["currSpeed"]
-        self.total = self.confirmed+self.unconfirmed
+        self.total = self.confirmed + self.unconfirmed
         self.label.setText("{0:.4f}".format(self.confirmed))
         self.setToolTip()
         self.adjustSize()
