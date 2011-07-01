@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>150</height>
+    <width>436</width>
+    <height>220</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>435</width>
-    <height>150</height>
+    <height>220</height>
    </size>
   </property>
   <widget class="QWidget" name="layoutWidget">
@@ -94,6 +94,54 @@
        <widget class="KLineEdit" name="APIkey"/>
       </item>
      </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>70</y>
+     <width>401</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Show on the main widget:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="KComboBox" name="mainvalue">
+      <item>
+       <property name="text">
+        <string>Total Rewards</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Confirmed Rewards</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Unconfirmed Rewards</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Estimated Rewards</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Hashrate</string>
+       </property>
+      </item>
+     </widget>
     </item>
    </layout>
   </widget>

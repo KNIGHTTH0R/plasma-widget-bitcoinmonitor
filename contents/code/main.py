@@ -31,6 +31,7 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         cg = self.config()
         self.APIkey = cg.readEntry("APIkey", QString("")).toString()
         self.pool = cg.readEntry("pool", 0).toInt()[0]
+        self.mainvalue = cg.readEntry("mainvalue", 0).toInt()[0]
 
         self.layout = QGraphicsLinearLayout(Qt.Horizontal, self.applet)
         self.applet.setLayout(self.layout)
@@ -62,17 +63,15 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         if self.dialog is None:
             self.dialog = KDialog(None)
             self.dialog.setWindowTitle(windowTitle)
-
             self.dialog.setMainWidget(self.ui)
-
-            self.dialog.setButtons(KDialog.ButtonCodes(KDialog.ButtonCode(KDialog.Ok | KDialog.Cancel | KDialog.Apply)))
-            self.dialog.showButton(KDialog.Apply, False)
+            self.dialog.setButtons(KDialog.ButtonCodes(KDialog.ButtonCode(KDialog.Ok | KDialog.Cancel)))
 
             self.connect(self.dialog, SIGNAL("applyClicked()"), self, SLOT("configAccepted()"))
             self.connect(self.dialog, SIGNAL("okClicked()"), self, SLOT("configAccepted()"))
 
         self.ui.APIkey.setText(self.APIkey)
         self.ui.pool.setCurrentIndex (self.pool)
+        self.ui.mainvalue.setCurrentIndex (self.mainvalue)
 
         self.dialog.show()
     @pyqtSignature("configAccepted()")
@@ -80,8 +79,10 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         cg = self.config()
         self.APIkey = self.ui.APIkey.text()
         self.pool = self.ui.pool.currentIndex()
+        self.mainvalue = self.ui.mainvalue.currentIndex()
         cg.writeEntry("APIkey", self.APIkey)
         cg.writeEntry("pool", self.pool)
+        cg.writeEntry("mainvalue", self.mainvalue)
         self.update()
         self.emit(SIGNAL("configNeedsSaving()"))
         self.update_data()
@@ -122,8 +123,8 @@ class bitcoinmonitorApplet(plasmascript.Applet):
                 <br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{1:.4f}</span> BTC\
                 <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{2:.4f}</span> BTC\
                 <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{3:.4f}</span> BTC\
-                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{4:}</span>"\
-                .format(self.total, self.confirmed, self.unconfirmed, self.estimated, self.hashrate1))
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{4:.1f}</span> MHash/s"\
+                .format(self.total, self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -143,6 +144,8 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         if self.pool == 0:
             self.confirmed = float(self.data["confirmed_reward"])
             self.hashrate = float(self.data["hashrate"])
+            self.estimated = 0
+            self.unconfirmed = 0
         if self.pool == 1:
             self.confirmed = float(self.data["user"]["confirmed_rewards"])
             self.unconfirmed = float(self.data["user"]["unconfirmed_rewards"])
@@ -159,13 +162,24 @@ class bitcoinmonitorApplet(plasmascript.Applet):
         if self.pool == 3:
             self.confirmed = float(self.data["confirmed"])
             self.unconfirmed = float(self.data["unconfirmed"])
+            self.estimated = 0
+            self.hashrate = 0
         if self.pool == 4:
             self.confirmed = float(self.data["User"]["unpaid"])
             self.unconfirmed = float(self.data["User"]["unconfirmed"])
             self.estimated = float(self.data["User"]["estimated"])
-            self.hashrate1 = self.data["User"]["currSpeed"]
+            self.hashrate = float(self.data["User"]["currSpeed"].replace(' MH/s', ''))
         self.total = self.confirmed + self.unconfirmed
-        self.label.setText("{0:.4f}".format(self.confirmed))
+        if self.mainvalue == 0:
+            self.label.setText("{0:.4f}".format(self.total))
+        if self.mainvalue == 1:
+            self.label.setText("{0:.4f}".format(self.confirmed))
+        if self.mainvalue == 2:
+            self.label.setText("{0:.4f}".format(self.unconfirmed))
+        if self.mainvalue == 3:
+            self.label.setText("{0:.4f}".format(self.estimated))
+        if self.mainvalue == 4:
+            self.label.setText("{0:.1f}".format(self.hashrate))
         self.setToolTip()
         self.adjustSize()
         return True
