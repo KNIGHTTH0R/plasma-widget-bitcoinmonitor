@@ -15,8 +15,10 @@ url = ["http://deepbit.net/api/", \
        "http://www.btcguild.com/api.php?api_key=", \
        "https://mining.bitcoin.cz/accounts/profile/json/", \
        "http://btcmine.com/api/getbalance/", \
-       "http://www.bitcoinpool.com/user.php?u="]
-url2 = ["", "", "", "", "&json=1"]
+       "http://www.bitcoinpool.com/user.php?u=", \
+       "https://mineco.in/users/",\
+       "https://mtred.com/api/user/key/"]
+url2 = ["", "", "", "", "&json=1", ".json",""]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args = None):
@@ -125,6 +127,16 @@ class bitcoinmonitorApplet(plasmascript.Applet):
                 <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{3:.4f}</span> BTC\
                 <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{4:.1f}</span> MHash/s"\
                 .format(self.total, self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
+        if self.pool == 5:
+            ttip.setSubText("<br />Total rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{2:.4f}</span> BTC\
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{3:.4f}</span> BTC"\
+                .format(self.total, self.confirmed, self.unconfirmed, self.estimated, self.hashrate))
+        if self.pool == 6:
+            ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{1:.4f}</span> BTC"\
+                .format(self.confirmed, self.estimated))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -169,6 +181,19 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.unconfirmed = float(self.data["User"]["unconfirmed"])
             self.estimated = float(self.data["User"]["estimated"])
             self.hashrate = float(self.data["User"]["currSpeed"].replace(' MH/s', ''))
+        if self.pool == 5:
+            self.confirmed = float(self.data["user"]["confirmed_reward"])
+            self.unconfirmed = float(self.data["user"]["unconfirmed_reward"])
+            self.estimated = float(self.data["user"]["estimated_reward_this_round"])
+            self.hashrate = 0
+        if self.pool == 6:
+            self.confirmed = float(self.data["balance"])
+            self.unconfirmed = 0
+            if float(self.data["server"]["roundshares"]) != 0:
+                self.estimated = float(self.data["rsolved"]) / float(self.data["server"]["roundshares"]) * 50
+            else:
+                self.estimated = 0
+            self.hashrate = 0
         self.total = self.confirmed + self.unconfirmed
         if self.mainvalue == 0:
             self.label.setText("{0:.4f}".format(self.total))

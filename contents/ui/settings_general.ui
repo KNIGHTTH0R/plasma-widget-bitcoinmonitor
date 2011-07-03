@@ -88,6 +88,16 @@
           <string>BitcoinPool</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Mineco.in</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>MTRed</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
