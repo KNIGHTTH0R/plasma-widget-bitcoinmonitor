@@ -17,8 +17,9 @@ url = ["http://deepbit.net/api/", \
        "http://btcmine.com/api/getbalance/", \
        "http://www.bitcoinpool.com/user.php?u=", \
        "https://mineco.in/users/",\
-       "https://mtred.com/api/user/key/"]
-url2 = ["", "", "", "", "&json=1", ".json",""]
+       "https://mtred.com/api/user/key/",\
+       "https://arsbitcoin.com/api.php?api_key="]
+url2 = ["", "", "", "", "&json=1", ".json","",""]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args = None):
@@ -137,6 +138,11 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             ttip.setSubText("<br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
                 <br />Estimated rewards: <span style=\"color:red; font-weight: bold\">{1:.4f}</span> BTC"\
                 .format(self.confirmed, self.estimated))
+        if self.pool == 7:
+            ttip.setSubText("<br />Total rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{1:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{2:.1f}</span> MHash/s"\
+                .format(self.total, self.confirmed, self.hashrate))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -194,6 +200,11 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             else:
                 self.estimated = 0
             self.hashrate = 0
+        if self.pool == 7:
+            self.confirmed = float(self.data["confirmed_rewards"])
+            self.unconfirmed = 0
+            self.estimated = 0
+            self.hashrate = float(self.data["hashrate"])
         self.total = self.confirmed + self.unconfirmed
         if self.mainvalue == 0:
             self.label.setText("{0:.4f}".format(self.total))

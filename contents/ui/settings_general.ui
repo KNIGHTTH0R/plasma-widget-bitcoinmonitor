@@ -98,6 +98,11 @@
           <string>MTRed</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>ArsBitcoin</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
