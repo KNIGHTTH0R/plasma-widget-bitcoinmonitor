@@ -143,7 +143,7 @@ class bitcoinmonitorApplet(plasmascript.Applet):
                 <br />Confirmed rewards: <span style=\"color:green; font-weight: bold\">{1:.4f}</span> BTC\
                 <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{2:.4f}</span> BTC\
                 <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s"\
-                .format(self.total, self.confirmed, self.hashrate))
+                .format(self.total, self.confirmed, self.unconfirmed, self.hashrate))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -203,7 +203,7 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.hashrate = 0
         if self.pool == 7:
             self.confirmed = float(self.data["confirmed_rewards"])
-            self.unconfirmed = float(self.data["totalPPSWork"])-float(self.data["confirmed_rewards"])
+            self.unconfirmed = float(self.data["totalPPSWork"])-float(self.data["paidPPSWork"])
             self.estimated = 0
             self.hashrate = float(self.data["hashrate"])
         self.total = self.confirmed + self.unconfirmed
