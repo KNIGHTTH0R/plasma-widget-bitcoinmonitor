@@ -103,6 +103,11 @@
           <string>ArsBitcoin</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>50BTC</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
@@ -163,14 +168,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -16,10 +16,11 @@ url = ["http://deepbit.net/api/", \
        "https://mining.bitcoin.cz/accounts/profile/json/", \
        "http://btcmine.com/api/getbalance/", \
        "http://www.bitcoinpool.com/user.php?u=", \
-       "https://mineco.in/users/",\
-       "https://mtred.com/api/user/key/",\
-       "https://arsbitcoin.com/api.php?api_key="]
-url2 = ["", "", "", "", "&json=1", ".json","",""]
+       "https://mineco.in/users/", \
+       "https://mtred.com/api/user/key/", \
+       "https://arsbitcoin.com/api.php?api_key=", \
+       "https://50btc.com/api/"]
+url2 = ["", "", "", "", "&json=1", ".json","","",""]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args = None):
@@ -144,6 +145,10 @@ class bitcoinmonitorApplet(plasmascript.Applet):
                 <br />Unconfirmed rewards: <span style=\"color:orange; font-weight: bold\">{2:.4f}</span> BTC\
                 <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{3:.1f}</span> MHash/s"\
                 .format(self.total, self.confirmed, self.unconfirmed, self.hashrate))
+        if self.pool == 8:
+            ttip.setSubText("<br />Rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{1:.1f}</span> MHash/s"\
+                .format(self.confirmed, self.hashrate))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
@@ -206,6 +211,11 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.unconfirmed = float(self.data["totalPPSWork"])-float(self.data["paidPPSWork"])
             self.estimated = 0
             self.hashrate = float(self.data["hashrate"])
+        if self.pool == 8:
+            self.confirmed = float(self.data["user"]["confirmed_rewards"])
+            self.unconfirmed = 0
+            self.estimated = 0
+            self.hashrate = float(self.data["user"]["hash_rate"])
         self.total = self.confirmed + self.unconfirmed
         if self.mainvalue == 0:
             self.label.setText("{0:.4f}".format(self.total))
