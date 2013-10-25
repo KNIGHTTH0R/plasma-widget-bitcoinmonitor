@@ -1,0 +1,30 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Debianized-By: Richard Ulrich <richi@paraeasy.ch>
+Debianized-Date: Fri, 25 Oct 2013 20:17:32 +0200
+Upstream-Name: Bitcoin Monitor
+Upstream-Contact: Andrius Štikonas <andrius@stikonas.eu>
+Source: http://kde-apps.org/content/show.php?content=142344
+
+Files: *
+Copyright: 2011-2013 Andrius Štikonas
+License: GPL
+ This program is free software: you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation, either version 3 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License along with
+ this program. If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ can be found in `/usr/share/common-licenses/GPL-3'.
+
+Files: debian/*
+Copyright: 2013 Richard Ulrich <richi@paraeasy.ch>
+License: GPL-3+
+ On Debian systems, the complete text of the GNU General Public License
+ can be found in `/usr/share/common-licenses/GPL-3'.

@@ -1,0 +1,14 @@
+Source: plasma-widget-bitcoinmonitor
+Section: kde
+Priority: extra
+Maintainer: Richard Ulrich <richi@paraeasy.ch>
+Build-Depends: python, debhelper (>= 9.0)
+Homepage: http://kde-apps.org/content/show.php?content=142344
+Standards-Version: 3.9.4
+
+Package: plasma-widget-bitcoinmonitor
+Architecture: any
+Depends: ${python:Depends}, ${misc:Depends}, plasma-scriptengine-python
+Description: Monitor the status of your Bitcoin miners
+ This plasmoid allows you to monitor the hashrate and earnings
+ of your Bitcoin miners on several mining pools.
