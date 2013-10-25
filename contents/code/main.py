@@ -11,6 +11,17 @@ from json import load, loads
 from urllib2 import urlopen,URLError,build_opener,HTTPCookieProcessor
 from time import time,localtime
 
+names = ["deepbit", \
+       "btcguild", \
+       "slush", \
+       "btcmine", \
+       "bitcoinpool", \
+       "mineco.in", \
+       "mtred", \
+       "arsbitcoin=", \
+       "50btc",
+       "eligius",
+       "p2pool"]
 url = ["http://deepbit.net/api/", \
        "http://www.btcguild.com/api.php?api_key=", \
        "https://mining.bitcoin.cz/accounts/profile/json/", \
@@ -20,9 +31,9 @@ url = ["http://deepbit.net/api/", \
        "https://mtred.com/api/user/key/", \
        "https://arsbitcoin.com/api.php?api_key=", \
        "https://50btc.com/api/",
-       "http://eligius.st/~wizkid057/newstats/userstats.php/",
-       ""]
-url2 = ["", "", "", "", "&json=1", ".json","","","", "", "/local_stats"]
+       "http://eligius.st/~wizkid057/newstats/hashrate-json.php/",
+       "http://p2pool.ulrichard.ch/local_stats"]
+url2 = ["", "", "", "", "&json=1", ".json","","","", "", ""]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args = None):
@@ -151,12 +162,22 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             ttip.setSubText("<br />Rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
                 <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{1:.1f}</span> MHash/s"\
                 .format(self.confirmed, self.hashrate))
+        if self.pool == 9: # eligius
+            ttip.setSubText("<br />Rewards: <span style=\"color:green; font-weight: bold\">{0:.4f}</span> BTC\
+                <br />Hashrate: <span style=\"color:blue; font-weight: bold\">{1:.1f}</span> MHash/s"\
+                .format(self.confirmed, self.hashrate))
+        if self.pool == 10: # p2pool
+            ttip.setSubText("<br />Hashrate: <span style=\"color:blue; font-weight: bold\">{1:.1f}</span> MHash/s"\
+                .format(self.hashrate))
         ttip.setAutohide(False)
         ttip.setImage(self.ttip_icon)
         Plasma.ToolTipManager.self().setContent(self.applet,ttip)
     @pyqtSignature("update_data()")
     def update_data(self):
-        self.data_url = kdecore.KUrl(url[self.pool] + str(self.APIkey) + url2[self.pool])
+        if pool == 10: # p2pool
+            self.data_url = kdecore.KUrl(url[self.pool])
+        else:
+            self.data_url = kdecore.KUrl(url[self.pool] + str(self.APIkey) + url2[self.pool])
         job = kio.KIO.storedGet(self.data_url, kio.KIO.NoReload, kio.KIO.HideProgressInfo)
         job.result.connect(self.update_values)
     def update_values(self,job):
@@ -218,10 +239,11 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.unconfirmed = 0
             self.estimated = 0
             self.hashrate = float(self.data["user"]["hash_rate"])
-        if self.pool == 9: #eligius
-            self.hashrate 0 0.01
-        if self.pool == 10: # p2pool
-            self.hashrate = float(self.data["miner_hash_rates"]["1SaturneKrPDwctdME1KoJdT3i5Xhgugt"])
+        if pool == 9: # eligius
+            self.unconfirmed = float(data["43200"]["shares"])
+            self.hashrate = float(data["128"]["hashrate"])
+        if pool == 10: # p2pool
+            self.hashrate = float(data["miner_hash_rates"][apikey])
         self.total = self.confirmed + self.unconfirmed
         if self.mainvalue == 0:
             self.label.setText("{0:.4f}".format(self.total))
