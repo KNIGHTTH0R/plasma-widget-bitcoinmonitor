@@ -19,8 +19,10 @@ url = ["http://deepbit.net/api/", \
        "https://mineco.in/users/", \
        "https://mtred.com/api/user/key/", \
        "https://arsbitcoin.com/api.php?api_key=", \
-       "https://50btc.com/api/"]
-url2 = ["", "", "", "", "&json=1", ".json","","",""]
+       "https://50btc.com/api/",
+       "http://eligius.st/~wizkid057/newstats/userstats.php/",
+       ""]
+url2 = ["", "", "", "", "&json=1", ".json","","","", "", "/local_stats"]
 
 class bitcoinmonitorApplet(plasmascript.Applet):
     def __init__(self,parent,args = None):
@@ -216,6 +218,10 @@ class bitcoinmonitorApplet(plasmascript.Applet):
             self.unconfirmed = 0
             self.estimated = 0
             self.hashrate = float(self.data["user"]["hash_rate"])
+        if self.pool == 9: #eligius
+            self.hashrate 0 0.01
+        if self.pool == 10: # p2pool
+            self.hashrate = float(self.data["miner_hash_rates"]["1SaturneKrPDwctdME1KoJdT3i5Xhgugt"])
         self.total = self.confirmed + self.unconfirmed
         if self.mainvalue == 0:
             self.label.setText("{0:.4f}".format(self.total))
